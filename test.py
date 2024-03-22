@@ -26,25 +26,25 @@ class KoreanAddressTests(unittest.TestCase):
     def test_predict_jibun_address(self):
         for row in self.jibun_address:
             predict = self.model.predict(row['text'])
-            # assert row['address_1'] == predict
+            assert row['address_1'] == predict
 
 
     def test_predict_road_address(self):
         for row in self.road_address:
             predict = self.model.predict(row['text'])
-            # assert row['address_1'] == predict
+            assert row['address_1'] == predict
 
 
     def test_deeper_predict_jibun_address(self):
         for row in self.jibun_address:
             predict = self.model.deeper_predict(row['text'])
-            # assert row['address_1'] == predict
+            assert row['address_2'] == predict
 
 
     def test_deeper_predict_road_address(self):
         for row in self.road_address:
             predict = self.model.deeper_predict(row['text'])
-            # assert row['address_1'] == predict
+            assert row['address_2'] == predict
 
 
 if __name__ == '__main__':
