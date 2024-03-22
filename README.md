@@ -13,7 +13,7 @@ address = model.predict('서울시 테헤란로25길 13')
 print(address)
 # 서울특별시
 
-address = model.deeper_predict('테헤란로25길 13')
+address = model.deeper_predict('역삼동 644-10')
 print(address)
 # 서울특별시 강남구
 ```
@@ -23,25 +23,34 @@ print(address)
 ### CPU
 
 ```bash
+# 종속성 설치
 pip install -U pip setuptools wheel
 pip install -U spacy
-pip install fire
+
+# 모델 복제
+git clone https://huggingface.co/Mineru/ko-address model/2024_02
 ```
 
 ### GPU(NVIDA Only)
 
 ```bash
+# 종속성 설치
 pip install -U pip setuptools wheel
 pip install -U 'spacy[cuda11x]'
-pip install fire
+
+# 모델 복제
+git clone https://huggingface.co/Mineru/ko-address model/2024_02
 ```
 
 ### Apple Silicon(M1)
 
 ```bash
+# 종속성 설치
 pip install -U pip setuptools wheel
 pip install -U 'spacy[apple]'
-pip install fire
+
+# 모델 복제
+git clone https://huggingface.co/Mineru/ko-address model/2024_02
 ```
 
 ## Dataset
