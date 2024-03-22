@@ -14,7 +14,7 @@ class KoreanAddress:
         else:
             raise "Errror: model must be either str or Language"
     
-    def predict(self, text: str, threshold: float = 0.9) -> Union[str, None]:
+    def predict(self, text: str, threshold: float = 0.2) -> Union[str, None]:
         doc = self.model(text)
         doc = doc.to_json()
         predict = list(doc["cats"].items())
@@ -26,7 +26,7 @@ class KoreanAddress:
             return None
 
 
-    def deeper_predict(self, text: str, threshold: float = 0.9) -> Union[str, None]:
+    def deeper_predict(self, text: str, threshold: float = 0.2) -> Union[str, None]:
         doc = self.model(text)
         doc = doc.to_json()
         predict = list(doc["cats"].items())
