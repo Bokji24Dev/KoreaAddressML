@@ -29,7 +29,8 @@ def install():
             'Topic :: Classification',
             'Programming Language :: Python',
             'Programming Language :: Python :: 3.10',
-            'Programming Language :: Python :: 3.11'
+            'Programming Language :: Python :: 3.11',
+            'Programming Language :: Python :: 3.12'
         ],
         packages=find_packages(),
         install_requires=required,

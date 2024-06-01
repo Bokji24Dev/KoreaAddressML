@@ -162,3 +162,5 @@ cython_debug/
 model
 dataset/archive*
 weights/*
+dataset/*.txt
+dataset/*.pk

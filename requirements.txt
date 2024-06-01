@@ -1,1 +1,7 @@
-spacy
+joblib
+transformers
+sentencepiece
+torch
+protobuf
+orjson
+scikit-learn

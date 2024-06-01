@@ -15,6 +15,8 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 os.environ["TORCH_USE_CUDA_DSA"] = '1'
 
+with open("dataset/koraddr_dataset_v3.pk", "rb") as f:
+    rows = pickle.load(f)
 
 def load_data(filepaths: List[str]):
     rows = []
@@ -47,6 +49,7 @@ for location in os.listdir(root_path):
 num_classes = 280 # 17
 batch_size = 256
 
+
 # CNN 모델 정의
 class SimpleCNN(nn.Module):
     def __init__(self):
@@ -68,26 +71,28 @@ class SimpleCNN(nn.Module):
         x = self.fc2(x)
         return x
 
-
-class MLP(nn.Module):
-    def __init__(self, input_size, hidden_size, num_classes):
-        super(MLP, self).__init__()
-        self.layer1 = nn.Linear(input_size, hidden_size)
-        self.layer2 = nn.Linear(hidden_size, hidden_size)
-        self.output = nn.Linear(hidden_size, num_classes)
+class ImprovedNN(nn.Module):
+    def __init__(self, input_size, num_classes):
+        super(ImprovedNN, self).__init__()
+        self.fc1 = nn.Linear(input_size, 128)
+        self.fc2 = nn.Linear(128, 64)
+        self.fc3 = nn.Linear(64, num_classes)
         self.relu = nn.ReLU()
-    
+        self.dropout = nn.Dropout(0.5)
+
     def forward(self, x):
-        out = self.layer1(x)
-        out = self.relu(out)
-        out = self.layer2(out)
-        out = self.relu(out)
-        out = self.output(out)
-        return out
+        x = x.view(-1, 32)  # 입력 데이터를 (batch_size, 32) 형태로 변환
+        x = self.relu(self.fc1(x))
+        x = self.dropout(x)
+        x = self.relu(self.fc2(x))
+        x = self.dropout(x)
+        x = self.fc3(x)
+        return x
+
 
 # 모델 초기화
-model = MLP(32, 64, 280)
 model = SimpleCNN()
+model = ImprovedNN()
 
 # CUDA 사용 가능 여부 확인
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -101,8 +106,6 @@ running_loss = 0.0
 num_epochs = 20
 
 PATH = "./weights/cnn/"
-
-# files = files[:1]
 
 result = []
 accuracis = []
