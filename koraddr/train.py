@@ -11,12 +11,13 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset, random_split
 
-os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
+os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-os.environ["TORCH_USE_CUDA_DSA"] = '1'
+os.environ["TORCH_USE_CUDA_DSA"] = "1"
 
 with open("dataset/koraddr_dataset_v3.pk", "rb") as f:
     rows = pickle.load(f)
+
 
 def load_data(filepaths: List[str]):
     rows = []
@@ -38,6 +39,7 @@ def load_data(filepaths: List[str]):
     y = df["class"]
     return X, y
 
+
 seed = 42
 random.seed(seed)
 root_path = "dataset/archive_v3/"
@@ -46,7 +48,7 @@ for location in os.listdir(root_path):
     for i in range(1, 256 + 1):
         files[i - 1].append(root_path + location + "/data_chunk_" + str(i) + ".pk")
 
-num_classes = 280 # 17
+num_classes = 280  # 17
 batch_size = 256
 
 
@@ -70,6 +72,7 @@ class SimpleCNN(nn.Module):
         x = self.dropout(x)
         x = self.fc2(x)
         return x
+
 
 class ImprovedNN(nn.Module):
     def __init__(self, input_size, num_classes):
@@ -114,11 +117,11 @@ for i, file in tqdm(enumerate(files), total=len(files), position=0):
     X, y = load_data(file)
     X = X.dropna()
     y = y[X.index]
-    
+
     # pandas DataFrame을 Tensor로 변환
     X_tensor = torch.tensor(X.values, dtype=torch.float32).unsqueeze(2).unsqueeze(3)
     y_tensor = torch.tensor(y.values, dtype=torch.long)
-    
+
     dataset = TensorDataset(X_tensor, y_tensor)
     train_size = int(0.8 * len(dataset))
     test_size = len(dataset) - train_size
@@ -126,7 +129,7 @@ for i, file in tqdm(enumerate(files), total=len(files), position=0):
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
-    
+
     for epoch in tqdm(range(num_epochs), position=1):
         model.train()
         for inputs, labels in train_loader:
@@ -139,15 +142,17 @@ for i, file in tqdm(enumerate(files), total=len(files), position=0):
             running_loss += loss.item() * inputs.size(0)
 
         epoch_loss = running_loss / len(train_loader.dataset)
-        result.append({
-            "round": i,
-            "epoch": f"{epoch+1}/{num_epochs}",
-            "loss": f"{epoch_loss:.4f}"
-        })
+        result.append(
+            {
+                "round": i,
+                "epoch": f"{epoch+1}/{num_epochs}",
+                "loss": f"{epoch_loss:.4f}",
+            }
+        )
 
     with open("result.json", "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
-    
+
     # 평가
     model.eval()
     correct = 0
@@ -162,14 +167,15 @@ for i, file in tqdm(enumerate(files), total=len(files), position=0):
 
     accuracy = 100 * correct / total
     accuracis.append(f"{accuracy:.2f}")
-    
+
     with open("accuracis.json", "w", encoding="utf-8") as f:
         json.dump(accuracis, f, ensure_ascii=False, indent=2)
-    
-    torch.save(model, PATH + f'model.{i}.pt')  # 전체 모델 저장
-    torch.save(model.state_dict(), PATH + f'model_state_dict.{i}.pt')  # 모델 객체의 state_dict 저장
-    torch.save({
-        'model': model.state_dict(),
-        'optimizer': optimizer.state_dict()
-    }, PATH + f'all.{i}.tar')  # 여러 가지 값 저장, 학습 중 진행 상황 저장을 위해 epoch, loss 값 등 일반 scalar값 저장 가능
-    
+
+    torch.save(model, PATH + f"model.{i}.pt")  # 전체 모델 저장
+    torch.save(
+        model.state_dict(), PATH + f"model_state_dict.{i}.pt"
+    )  # 모델 객체의 state_dict 저장
+    torch.save(
+        {"model": model.state_dict(), "optimizer": optimizer.state_dict()},
+        PATH + f"all.{i}.tar",
+    )  # 여러 가지 값 저장, 학습 중 진행 상황 저장을 위해 epoch, loss 값 등 일반 scalar값 저장 가능
